@@ -1,24 +1,88 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import { Autocomplete, Container, Paper, TextField } from "@mui/material";
+
+const zodicSigns = [
+  "Aries",
+  "Taurus",
+  "Gemini",
+  "Cancer",
+  "Leo",
+  "Virgo",
+  "Libra",
+  "Scorpius",
+  "Sagittarius",
+  "Capricornus",
+  "Aquarius",
+  "Pisces",
+];
 
 function App() {
+  const [cardData, setcardData] = useState({});
+
+  const getData = async (zodic) => {
+    const res = await fetch(
+      `https://aztro.sameerkumar.website/?sign=${zodicSigns[zodic]}&day=today`,
+      {
+        method: "POST",
+      }
+    );
+
+    const data = await res.json();
+
+    setcardData(data);
+  };
+
+  console.log(cardData);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <Container sx={{ display: "flex", justifyContent: "center", my: 5 }}>
+        <Autocomplete
+          size="small"
+          disablePortal
+          options={zodicSigns}
+          sx={{ width: "60%" }}
+          onChange={(e) => getData(e.target.value)}
+          renderInput={(params) => (
+            <TextField {...params} label="Zodiac Signs" />
+          )}
+        />
+      </Container>
+
+      {Object.keys(cardData).length !== 0 && (
+        <Paper
+          elevation={6}
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <Card sx={{ minWidth: 275 }} variant="outlined">
+            <CardContent>
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.secondary"
+                gutterBottom
+              >
+                {cardData.color ? cardData.color : ""}
+              </Typography>
+              <Typography variant="h5" component="div"></Typography>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                adjective
+              </Typography>
+              <Typography variant="body2">
+                well meaning and kindly.
+                <br />
+                {'"a benevolent smile"'}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Paper>
+      )}
+    </>
   );
 }
 
