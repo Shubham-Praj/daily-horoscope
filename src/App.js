@@ -15,7 +15,6 @@ import {
   Tooltip,
   Zoom,
 } from "@mui/material";
-import bgImg from "./img/space.jpg";
 
 const theme = createTheme({
   palette: {
@@ -60,7 +59,7 @@ function App() {
           width: "100vw",
           height: "100vh",
           borderRadius: 0,
-          backgroundImage: `url(${bgImg})`,
+          backgroundImage: `url("https://wallpapercave.com/wp/wp2082815.jpg")`,
           backgroundPosition: "center",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
