@@ -2,7 +2,26 @@ import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Autocomplete, Container, Paper, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Chip,
+  Container,
+  createTheme,
+  Grid,
+  Paper,
+  TextField,
+  ThemeProvider,
+  Tooltip,
+  Zoom,
+} from "@mui/material";
+import bgImg from "./img/space.jpg";
+
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 const zodicSigns = [
   "Aries",
@@ -12,9 +31,9 @@ const zodicSigns = [
   "Leo",
   "Virgo",
   "Libra",
-  "Scorpius",
+  "Scorpio",
   "Sagittarius",
-  "Capricornus",
+  "Capricorn",
   "Aquarius",
   "Pisces",
 ];
@@ -24,65 +43,150 @@ function App() {
 
   const getData = async (zodic) => {
     const res = await fetch(
-      `https://aztro.sameerkumar.website/?sign=${zodicSigns[zodic]}&day=today`,
+      `https://aztro.sameerkumar.website/?sign=${zodic.toLowerCase()}&day=today`,
       {
         method: "POST",
       }
     );
 
     const data = await res.json();
-
     setcardData(data);
   };
 
-  console.log(cardData);
-
   return (
-    <>
-      <Container sx={{ display: "flex", justifyContent: "center", my: 5 }}>
-        <Autocomplete
-          size="small"
-          disablePortal
-          options={zodicSigns}
-          sx={{ width: "60%" }}
-          onChange={(e) => getData(e.target.value)}
-          renderInput={(params) => (
-            <TextField {...params} label="Zodiac Signs" />
-          )}
-        />
-      </Container>
+    <ThemeProvider theme={theme}>
+      <Paper
+        sx={{
+          width: "100vw",
+          height: "100vh",
+          borderRadius: 0,
+          backgroundImage: `url(${bgImg})`,
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <Box sx={{ p: 5 }}>
+          <Container
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              my: 5,
+            }}
+          >
+            <Autocomplete
+              size="small"
+              disablePortal
+              options={zodicSigns}
+              sx={{
+                width: "100%",
+                backgroundColor: "black",
+                borderRadius: "5px",
+              }}
+              onChange={(event, newValue) => {
+                getData(newValue);
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Zodiac Signs" />
+              )}
+            />
+          </Container>
 
-      {Object.keys(cardData).length !== 0 && (
-        <Paper
-          elevation={6}
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Card sx={{ minWidth: 275 }} variant="outlined">
-            <CardContent>
-              <Typography
-                sx={{ fontSize: 14 }}
-                color="text.secondary"
-                gutterBottom
+          {Object.keys(cardData).length !== 0 && (
+            <Box
+              elevation={0}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Card
+                sx={{
+                  backgroundColor: "transparent",
+                  backdropFilter: "blur(4.6px)",
+                  borderRadius: "10px",
+                  border: "1px solid white",
+                }}
+                variant="outlined"
               >
-                {cardData.color ? cardData.color : ""}
-              </Typography>
-              <Typography variant="h5" component="div"></Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                adjective
-              </Typography>
-              <Typography variant="body2">
-                well meaning and kindly.
-                <br />
-                {'"a benevolent smile"'}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Paper>
-      )}
-    </>
+                <CardContent>
+                  <Typography color="text.h1" gutterBottom variant="h5">
+                    {cardData ? cardData.date_range : ""}
+                  </Typography>
+
+                  <Typography variant="body2">
+                    {cardData.description}
+                  </Typography>
+
+                  <Box sx={{ mt: 2 }}>
+                    <Grid
+                      spacing={2}
+                      container
+                      direction="row"
+                      justifyContent="center"
+                      alignItems="center"
+                    >
+                      <Grid item>
+                        <Tooltip
+                          title="Compatibility"
+                          placement="bottom"
+                          arrow
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip label={cardData.compatibility} />
+                        </Tooltip>
+                      </Grid>
+
+                      <Grid item>
+                        <Tooltip
+                          title="Color"
+                          placement="bottom"
+                          arrow
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip label={cardData.color} />
+                        </Tooltip>
+                      </Grid>
+
+                      <Grid item>
+                        <Tooltip
+                          title="Mood"
+                          placement="bottom"
+                          arrow
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip label={cardData.mood} />
+                        </Tooltip>
+                      </Grid>
+                      <Grid item>
+                        <Tooltip
+                          title="Lucky Time"
+                          placement="bottom"
+                          arrow
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip label={cardData.lucky_time} />
+                        </Tooltip>
+                      </Grid>
+                      <Grid item>
+                        <Tooltip
+                          title="Lucky Number"
+                          placement="bottom"
+                          arrow
+                          TransitionComponent={Zoom}
+                        >
+                          <Chip label={cardData.lucky_number} />
+                        </Tooltip>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
+          )}
+        </Box>
+      </Paper>
+    </ThemeProvider>
   );
 }
 
